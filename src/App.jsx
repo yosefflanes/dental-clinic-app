@@ -5,6 +5,7 @@ import Navbar from "./components/Navbar";
 import ProtectedRoute from "./components/ProtectedRoute";
 import Appointment from "./pages/Appointment";
 import Home from "./pages/Home";
+import MyAppointment from "./pages/MyAppointment";
 
 function App() {
   return (
@@ -18,6 +19,14 @@ function App() {
           element={
             <ProtectedRoute>
               <Appointment />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/appointment/my"
+          element={
+            <ProtectedRoute>
+              <MyAppointment />
             </ProtectedRoute>
           }
         />

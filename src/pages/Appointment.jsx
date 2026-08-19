@@ -97,7 +97,10 @@ export default function Appointment() {
     };
 
     try {
-      const response = await apiRequest("/appointments", "POST", payload);
+      const response = await apiRequest("/appointments", {
+        method: "POST",
+        body: payload,
+      });
       alert("Berhasil!", response.message);
 
       navigate("/appointment/my");
@@ -105,7 +108,7 @@ export default function Appointment() {
       const errorMessage =
         error.response?.data?.message ||
         "Terjadi kesalahan sistem, silahkan coba lagi.";
-      alert("Gagal:", errorMessage);
+      alert("Gagal: " + errorMessage);
     } finally {
       setIsSubmitting(false);
     }
