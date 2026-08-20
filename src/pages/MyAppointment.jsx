@@ -35,13 +35,15 @@ export default function MyAppointment() {
 
     try {
       setCancelLoading(id);
-      await apiRequest(`/appointments/${id}/cancel`, "PATCH");
+      await apiRequest(`/appointments/${id}/cancel`, {
+        method: "PATCH"
+      });
       alert("Janji temu berhasil dibatalkan.");
-      fetchAppointments(); // Refresh data setelah berhasil batal
+      fetchAppointments();
     } catch (error) {
       console.error("Gagal membatalkan janji temu:", error);
-      const errorMessage = error.response?.data?.message || "Gagal membatalkan janji temu.";
-      alert(errorMessage);
+      const errorMessage = error.message || "Gagal membatalkan janji temu.";
+      alert("Gagal:" + errorMessage);
     } finally {
       setCancelLoading(null);
     }
@@ -124,7 +126,7 @@ export default function MyAppointment() {
                   </div>
                   
                   {appt.complaint && (
-                    <div className="mt-2 text-sm text-slate-500 bg-slate-50 p-3 rounded-lg border border-slate-100">
+                    <div className="mt-2 text-sm text-slate-500 bg-blue-100 p-3 rounded-lg border border-slate-100">
                       <span className="font-semibold text-slate-700">Keluhan: </span> {appt.complaint}
                     </div>
                   )}
