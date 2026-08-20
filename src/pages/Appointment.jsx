@@ -136,8 +136,8 @@ export default function Appointment() {
     <section className="max-w-3xl mx-auto py-24 px-6">
       <div className="bg-white p-8 md:p-10 rounded-3xl shadow-sm border border-slate-100">
         <div className="mb-8 text-center md:text-left">
-          <h2 className="text-3xl font-extrabold text-slate-800 mb-2">
-            Buat Janji Temu
+          <h2 className="text-2xl md:text-3xl font-extrabold text-slate-800 mb-2">
+            Buat Appointment
           </h2>
           <p className="text-slate-500">
             Pilih layanan, tanggal, dokter, dan waktu kunjunganmu.
