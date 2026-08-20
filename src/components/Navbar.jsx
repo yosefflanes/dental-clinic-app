@@ -76,14 +76,14 @@ const Navbar = () => {
         </Link>
         {user && (
           <Link
-            to="appointment/my"
+            to="/appointment/my"
             className="text-slate-800 hover:text-blue-dark font-medium cursor-pointer"
           >
             Riwayat Appointment
           </Link>
         )}
         <Link
-          to="#"
+          to="/services"
           className="text-slate-800 hover:text-blue-dark font-medium"
         >
           Layanan Kami
@@ -144,6 +144,7 @@ const Navbar = () => {
           <div className="px-4 pt-2 pb-4 space-y-1">
             <Link
               to="/"
+              onClick={() => setIsMobileMenuOpen(false)}
               className="block text-center px-3 py-3 text-base font-medium text-slate-800 hover:bg-slate-50 hover:text-blue-dark rounded-md"
             >
               Beranda
@@ -153,6 +154,7 @@ const Navbar = () => {
               onClick={(e) => {
                 toggleMenu();
                 handleAppointmentClick(e);
+                setIsMobileMenuOpen(false)
               }}
               className="block text-center px-3 py-3 text-base font-medium text-slate-800 hover:bg-slate-50 hover:text-blue-dark rounded-md"
             >
@@ -161,13 +163,15 @@ const Navbar = () => {
             {user && (
               <Link
                 to="/appointment/my"
+                onClick={() => setIsMobileMenuOpen(false)}
                 className="block text-center px-3 py-3 text-base font-medium text-slate-800 hover:bg-slate-50 hover:text-blue-dark rounded-md"
               >
                 Riwayat Appointment
               </Link>
             )}
             <Link
-                to="/appointment/my"
+                to="/services"
+                onClick={() => setIsMobileMenuOpen(false)}
                 className="block text-center px-3 py-3 text-base font-medium text-slate-800 hover:bg-slate-50 hover:text-blue-dark rounded-md"
               >
                 Layanan Kami

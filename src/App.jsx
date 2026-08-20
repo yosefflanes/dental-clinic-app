@@ -6,6 +6,7 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import Appointment from "./pages/Appointment";
 import Home from "./pages/Home";
 import MyAppointment from "./pages/MyAppointment";
+import Services from "./pages/Services";
 
 function App() {
   return (
@@ -13,7 +14,6 @@ function App() {
       <Navbar />
       <Routes>
         <Route path="/" element={<Home />} />
-
         <Route
           path="/appointment"
           element={
@@ -30,6 +30,7 @@ function App() {
             </ProtectedRoute>
           }
         />
+        <Route path="/services" element={<Services />} />
       </Routes>
       <Footer />
     </ReactLenis>
