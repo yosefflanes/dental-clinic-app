@@ -2,21 +2,23 @@ import { useState, useEffect, useRef } from "react";
 import { X, Eye, EyeOff, Loader2 } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
 
+const INITIAL_FORM_DATA = {
+  name: "",
+  phone: "",
+  gender: "",
+  date_of_birth: "",
+  email: "",
+  password: "",
+  password_confirmation: "",
+};
+
 export function AuthModal({ isOpen, onClose, initialView = "login" }) {
   const [view, setView] = useState(initialView);
   const modalRef = useRef(null);
   const [errorMessage, setErrorMessage] = useState("");
   const { login, register } = useAuth();
 
-  const [formData, setFormData] = useState({
-    name: "",
-    phone: "",
-    gender: "",
-    date_of_birth: "",
-    email: "",
-    password: "",
-    password_confirmation: "",
-  });
+  const [formData, setFormData] = useState(INITIAL_FORM_DATA);
 
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
@@ -26,15 +28,7 @@ export function AuthModal({ isOpen, onClose, initialView = "login" }) {
     if (isOpen) {
       // eslint-disable-next-line
       setView(initialView);
-      setFormData({
-        name: "",
-        phone: "",
-        gender: "",
-        date_of_birth: "",
-        email: "",
-        password: "",
-        password_confirmation: "",
-      });
+      setFormData(INITIAL_FORM_DATA);
       setShowPassword(false);
       setShowConfirmPassword(false);
       setErrorMessage(null);
@@ -314,6 +308,9 @@ export function AuthModal({ isOpen, onClose, initialView = "login" }) {
             onClick={() => {
               setView(view === "login" ? "register" : "login");
               setErrorMessage(null);
+              setFormData(INITIAL_FORM_DATA);
+              setShowPassword(false);
+              setShowConfirmPassword(false);
             }}
             className="font-semibold text-blue-custom underline underline-offset-4 hover:text-blue-dark transition-colors"
           >
