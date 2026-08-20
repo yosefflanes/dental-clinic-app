@@ -75,11 +75,19 @@ const Navbar = () => {
         >
           Appointment
         </Link>
+        {user && (
+          <Link
+            to="appointment/my"
+            className="text-slate-800 hover:text-blue-dark font-medium cursor-pointer"
+          >
+            Riwayat Appointment
+          </Link>
+        )}
         <Link
           to="#"
           className="text-slate-800 hover:text-blue-dark font-medium"
         >
-          Klinik Kami
+          Layanan Kami
         </Link>
       </nav>
 
