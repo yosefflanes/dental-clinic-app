@@ -133,7 +133,7 @@ export default function Appointment() {
   };
 
   return (
-    <section className="max-w-3xl mx-auto py-24 px-6">
+    <section className="max-w-3xl mx-auto py-24 px-6 mt-12">
       <div className="bg-white p-8 md:p-10 rounded-3xl shadow-sm border border-slate-100">
         <div className="mb-8 text-center md:text-left">
           <h2 className="text-2xl md:text-3xl font-extrabold text-slate-800 mb-2">

@@ -90,7 +90,7 @@ export default function MyAppointment() {
   return (
     <section className="max-w-4xl mx-auto py-24 px-6 min-h-screen mt-12">
       <div className="mb-10 text-center md:text-left">
-        <h2 className="text-3xl font-extrabold text-slate-800 mb-2">Riwayat Janji Temu</h2>
+        <h2 className="text-3xl font-extrabold text-slate-800 mb-2">Riwayat Appointment</h2>
         <p className="text-slate-500">Pantau jadwal dan status kunjunganmu ke klinik di sini.</p>
       </div>
 
