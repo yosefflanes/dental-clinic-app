@@ -26,7 +26,7 @@ const Navbar = () => {
       // eslint-disable-next-line
       setPendingRoute(null);
     }
-  }, [isLoggedIn, pendingRoute, navigate]); 
+  }, [isLoggedIn, pendingRoute, navigate]);
 
   const toggleMenu = () => {
     setIsMobileMenuOpen(!isMobileMenuOpen);
@@ -61,34 +61,26 @@ const Navbar = () => {
         onClick={() => navigate("/")}
       />
 
-      <nav>
-        <ul className="hidden md:flex space-x-8">
-          <li>
-            <Link
-              to="/"
-              className="text-slate-800 hover:text-blue-dark font-medium"
-            >
-              Beranda
-            </Link>
-          </li>
-          <li>
-            <Link
-              to="/appointment"
-              onClick={handleAppointmentClick}
-              className="text-slate-800 hover:text-blue-dark font-medium cursor-pointer"
-            >
-              Appointment
-            </Link>
-          </li>
-          <li>
-            <Link
-              to="#"
-              className="text-slate-800 hover:text-blue-dark font-medium"
-            >
-              Klinik Kami
-            </Link>
-          </li>
-        </ul>
+      <nav className="hidden md:flex space-x-8">
+        <Link
+          to="/"
+          className="text-slate-800 hover:text-blue-dark font-medium"
+        >
+          Beranda
+        </Link>
+        <Link
+          to="/appointment"
+          onClick={handleAppointmentClick}
+          className="text-slate-800 hover:text-blue-dark font-medium cursor-pointer"
+        >
+          Appointment
+        </Link>
+        <Link
+          to="#"
+          className="text-slate-800 hover:text-blue-dark font-medium"
+        >
+          Klinik Kami
+        </Link>
       </nav>
 
       {/* Bagian Tombol Kanan (Desktop) */}

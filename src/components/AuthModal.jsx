@@ -5,8 +5,8 @@ import { useAuth } from "../context/AuthContext";
 export function AuthModal({ isOpen, onClose, initialView = "login" }) {
   const [view, setView] = useState(initialView);
   const modalRef = useRef(null);
-
-  const {login, register} = useAuth();
+  const [errorMessage, setErrorMessage] = useState("");
+  const { login, register } = useAuth();
 
   const [formData, setFormData] = useState({
     name: "",
@@ -21,15 +21,19 @@ export function AuthModal({ isOpen, onClose, initialView = "login" }) {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [errorMessage, setErrorMessage] = useState(null);
 
   useEffect(() => {
     if (isOpen) {
       // eslint-disable-next-line
       setView(initialView);
       setFormData({
-        name: "", phone: "", gender: "", date_of_birth: "",
-        email: "", password: "", password_confirmation: ""
+        name: "",
+        phone: "",
+        gender: "",
+        date_of_birth: "",
+        email: "",
+        password: "",
+        password_confirmation: "",
       });
       setShowPassword(false);
       setShowConfirmPassword(false);
@@ -58,18 +62,18 @@ export function AuthModal({ isOpen, onClose, initialView = "login" }) {
 
   // Fungsi untuk update state formData saat user mengetik
   const handleChange = (e) => {
-    setFormData({...formData, [e.target.name]: e.target.value});
-  }
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
 
   // Fungsi tombol submit
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsSubmitting(true);
     setErrorMessage(null);
-    
+
     let result;
 
-    if (view === "login"){
+    if (view === "login") {
       result = await login(formData.email, formData.password);
     } else {
       result = await register(formData);
@@ -80,13 +84,19 @@ export function AuthModal({ isOpen, onClose, initialView = "login" }) {
     if (result.success) {
       onClose();
     } else {
-      if (typeof result.errors === "string") {
-        setErrorMessage(result.errors);
-      } else if (result.errors) {
+      if (result.errors && typeof result.errors === "object") {
         const firstErrorKey = Object.keys(result.errors)[0];
         setErrorMessage(result.errors[firstErrorKey][0]);
+      } else if (result.message) {
+        setErrorMessage(result.message);
+      } else if (typeof result.errors === "string") {
+        setErrorMessage(result.errors);
       } else {
-        setErrorMessage("Terjadi kesalahan pada server. Coba lagi");
+        setErrorMessage(
+          view === "login"
+            ? "Email atau password yang anda masukkan salah."
+            : "Terjadi kesalahan pada server. Coba lagi",
+        );
       }
     }
   };
@@ -125,12 +135,17 @@ export function AuthModal({ isOpen, onClose, initialView = "login" }) {
           </div>
         )}
 
-        <form key={view} className="flex flex-col gap-4" onSubmit={handleSubmit}>
-          
+        <form
+          key={view}
+          className="flex flex-col gap-4"
+          onSubmit={handleSubmit}
+        >
           {view === "register" && (
             <>
               <div className="flex flex-col gap-2">
-                <label className="text-sm font-medium text-zinc-900">Nama Lengkap</label>
+                <label className="text-sm font-medium text-zinc-900">
+                  Nama Lengkap
+                </label>
                 <input
                   type="text"
                   name="name"
@@ -143,7 +158,9 @@ export function AuthModal({ isOpen, onClose, initialView = "login" }) {
               </div>
 
               <div className="flex flex-col gap-2">
-                <label className="text-sm font-medium text-zinc-900">Nomor HP</label>
+                <label className="text-sm font-medium text-zinc-900">
+                  Nomor HP
+                </label>
                 <input
                   type="tel"
                   name="phone"
@@ -157,27 +174,29 @@ export function AuthModal({ isOpen, onClose, initialView = "login" }) {
 
               <div className="flex flex-col sm:flex-row gap-4">
                 <div className="flex flex-col gap-2 flex-1">
-                  <label className="text-sm font-medium text-zinc-900">Jenis Kelamin</label>
+                  <label className="text-sm font-medium text-zinc-900">
+                    Jenis Kelamin
+                  </label>
                   <div className="flex items-center gap-4 h-11">
                     <label className="flex items-center gap-2 text-sm text-zinc-700 cursor-pointer">
-                      <input 
-                        type="radio" 
-                        name="gender" 
-                        value="pria" 
+                      <input
+                        type="radio"
+                        name="gender"
+                        value="pria"
                         checked={formData.gender === "pria"}
                         onChange={handleChange}
-                        className="w-4 h-4 text-blue-custom focus:ring-blue-custom" 
+                        className="w-4 h-4 text-blue-custom focus:ring-blue-custom"
                       />
                       Pria
                     </label>
                     <label className="flex items-center gap-2 text-sm text-zinc-700 cursor-pointer">
-                      <input 
-                        type="radio" 
-                        name="gender" 
-                        value="wanita" 
+                      <input
+                        type="radio"
+                        name="gender"
+                        value="wanita"
                         checked={formData.gender === "wanita"}
                         onChange={handleChange}
-                        className="w-4 h-4 text-blue-custom focus:ring-blue-custom" 
+                        className="w-4 h-4 text-blue-custom focus:ring-blue-custom"
                       />
                       Wanita
                     </label>
@@ -185,7 +204,9 @@ export function AuthModal({ isOpen, onClose, initialView = "login" }) {
                 </div>
 
                 <div className="flex flex-col gap-2 flex-1">
-                  <label className="text-sm font-medium text-zinc-900">Tanggal Lahir</label>
+                  <label className="text-sm font-medium text-zinc-900">
+                    Tanggal Lahir
+                  </label>
                   <input
                     type="date"
                     name="date_of_birth"
@@ -211,9 +232,11 @@ export function AuthModal({ isOpen, onClose, initialView = "login" }) {
               required
             />
           </div>
-          
+
           <div className="flex flex-col gap-2">
-            <label className="text-sm font-medium text-zinc-900">Password</label>
+            <label className="text-sm font-medium text-zinc-900">
+              Password
+            </label>
             <div className="relative">
               <input
                 type={showPassword ? "text" : "password"}
@@ -236,7 +259,9 @@ export function AuthModal({ isOpen, onClose, initialView = "login" }) {
 
           {view === "register" && (
             <div className="flex flex-col gap-2">
-              <label className="text-sm font-medium text-zinc-900">Konfirmasi Password</label>
+              <label className="text-sm font-medium text-zinc-900">
+                Konfirmasi Password
+              </label>
               <div className="relative">
                 <input
                   type={showConfirmPassword ? "text" : "password"}
@@ -252,7 +277,11 @@ export function AuthModal({ isOpen, onClose, initialView = "login" }) {
                   onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                   className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-400 hover:text-zinc-600 focus:outline-none"
                 >
-                  {showConfirmPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                  {showConfirmPassword ? (
+                    <EyeOff size={18} />
+                  ) : (
+                    <Eye size={18} />
+                  )}
                 </button>
               </div>
             </div>
@@ -261,15 +290,17 @@ export function AuthModal({ isOpen, onClose, initialView = "login" }) {
           <button
             type="submit"
             disabled={isSubmitting}
-            className="inline-flex items-center justify-center rounded-lg text-sm font-semibold bg-blue-custom text-white h-11 px-4 py-2 hover:bg-blue-dark mt-4 transition-colors shrink-0 disabled:opacity-70 disabled:cursor-not-allowed"
+            className="inline-flex items-center justify-center rounded-lg text-sm font-semibold bg-blue-custom text-white h-11 px-4 py-2 hover:bg-blue-dark mt-4 transition-colors shrink-0 disabled:opacity-70 disabled:cursor-not-allowed hover:cursor-pointer"
           >
             {isSubmitting ? (
               <>
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                 Memproses...
               </>
+            ) : view === "login" ? (
+              "Masuk"
             ) : (
-              view === "login" ? "Masuk" : "Daftar"
+              "Daftar"
             )}
           </button>
         </form>
@@ -280,7 +311,10 @@ export function AuthModal({ isOpen, onClose, initialView = "login" }) {
           </span>
           <button
             type="button"
-            onClick={() => setView(view === "login" ? "register" : "login")}
+            onClick={() => {
+              setView(view === "login" ? "register" : "login");
+              setErrorMessage(null);
+            }}
             className="font-semibold text-blue-custom underline underline-offset-4 hover:text-blue-dark transition-colors"
           >
             {view === "login" ? "Daftar sekarang" : "Masuk di sini"}
