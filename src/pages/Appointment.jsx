@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { apiRequest } from "../api/apiRequest";
 import { Loader2 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import AlertModal from "@/components/AlertModal";
 
 export default function Appointment() {
   const navigate = useNavigate();
@@ -15,6 +16,13 @@ export default function Appointment() {
   const [loadingServices, setLoadingServices] = useState(true);
   const [loadingDoctors, setLoadingDoctors] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const [modal, setModal] = useState({
+    isOpen: false,
+    type: "",
+    message: "",
+    onConfirm: null,
+  });
 
   const isSunday = (dateString) => {
     if (!dateString) return false;
@@ -101,14 +109,24 @@ export default function Appointment() {
         method: "POST",
         body: payload,
       });
-      alert("Berhasil!", response.message);
 
-      navigate("/appointment/my");
+      setModal({
+        isOpen: true,
+        type: "success",
+        message: response.message || "Appointment berhasil dibuat.",
+        onConfirm: () => navigate("/appointment/my"),
+      });
     } catch (error) {
       const errorMessage =
         error.response?.data?.message ||
         "Terjadi kesalahan sistem, silahkan coba lagi.";
-      alert("Gagal: " + errorMessage);
+      
+        setModal({
+          isOpen: true,
+          type: "error",
+          message: errorMessage,
+          onConfirm: null,
+        });
     } finally {
       setIsSubmitting(false);
     }
@@ -288,6 +306,18 @@ export default function Appointment() {
           </Button>
         </form>
       </div>
+      <AlertModal
+        isOpen={modal.isOpen}
+        type={modal.type}
+        message={modal.message}
+        onClose={() => {
+          setModal({...modal, isOpen: false});
+          if (modal.type === "success" && modal.onConfirm){
+            modal.onConfirm();
+          }
+        }}
+        onConfirm={modal.onConfirm}
+      />
     </section>
   );
 }
