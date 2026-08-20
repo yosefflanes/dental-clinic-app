@@ -47,7 +47,6 @@ const Navbar = () => {
       setPendingRoute("/appointment");
       openAuth("login");
     } else {
-      // Jika sudah login, pindah ke halaman appointment
       navigate("/appointment");
     }
   };
@@ -159,12 +158,20 @@ const Navbar = () => {
             >
               Appointment
             </Link>
+            {user && (
+              <Link
+                to="/appointment/my"
+                className="block text-center px-3 py-3 text-base font-medium text-slate-800 hover:bg-slate-50 hover:text-blue-dark rounded-md"
+              >
+                Riwayat Appointment
+              </Link>
+            )}
             <Link
-              to="#"
-              className="block text-center px-3 py-3 text-base font-medium text-slate-800 hover:bg-slate-50 hover:text-blue-dark rounded-md"
-            >
-              Klinik Kami
-            </Link>
+                to="/appointment/my"
+                className="block text-center px-3 py-3 text-base font-medium text-slate-800 hover:bg-slate-50 hover:text-blue-dark rounded-md"
+              >
+                Layanan Kami
+              </Link>
           </div>
 
           <div className="px-4 py-4 border-t border-slate-100 flex flex-col gap-3">
