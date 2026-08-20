@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { apiRequest } from "../api/apiRequest";
+import AlertModal from "@/components/AlertModal";
 import { Button } from "@/components/ui/button";
 import { Loader2, Calendar, Clock, User, Stethoscope } from "lucide-react";
 
@@ -7,6 +8,13 @@ export default function MyAppointment() {
   const [appointments, setAppointments] = useState([]);
   const [loading, setLoading] = useState(true);
   const [cancelLoading, setCancelLoading] = useState(null);
+
+  const [modal, setModal] =  useState({
+    isOpen: false,
+    type: "",
+    message: "",
+    onConfirm: null,
+  });
 
   // Fungsi untuk mengambil data riwayat janji temu
   const fetchAppointments = async () => {
@@ -30,24 +38,32 @@ export default function MyAppointment() {
 
   // Fungsi untuk membatalkan janji temu
   const handleCancel = async (id) => {
-    const isConfirmed = window.confirm("Apakah kamu yakin ingin membatalkan janji temu ini?");
-    if (!isConfirmed) return;
+    setModal({...modal, isOpen: false});
 
     try {
       setCancelLoading(id);
-      await apiRequest(`/appointments/${id}/cancel`, {
-        method: "PATCH"
-      });
-      alert("Janji temu berhasil dibatalkan.");
+      await apiRequest(`/appointments/${id}/cancel`, {method: "PATCH"});
       fetchAppointments();
+
+      setModal({
+        isOpen: true,
+        type: "success",
+        message: "Appointment berhasil dibatalkan.",
+        onConfirm: null,
+      });
     } catch (error) {
-      console.error("Gagal membatalkan janji temu:", error);
-      const errorMessage = error.message || "Gagal membatalkan janji temu.";
-      alert("Gagal:" + errorMessage);
+      const errorMessage = error.message || "Gagal membatalkan appointment.";
+
+      setModal({
+        isOpen: true,
+        type: "error",
+        message: errorMessage,
+        onConfirm: null,
+      });
     } finally {
       setCancelLoading(null);
     }
-  };
+  }
 
   // Fungsi untuk menentukan warna status
   const getStatusColor = (status) => {
@@ -160,6 +176,13 @@ export default function MyAppointment() {
           })}
         </div>
       )}
+      <AlertModal
+        isOpen={modal.isOpen}
+        type={modal.type}
+        message={modal.message}
+        onClose={() => setModal({...modal, isOpen: false})}
+        onConfirm={modal.onConfirm}
+      />
     </section>
   );
 }
