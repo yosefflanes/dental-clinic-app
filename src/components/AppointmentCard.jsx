@@ -1,6 +1,6 @@
 import { CalendarDays, Clock, Loader2, Stethoscope } from "lucide-react";
 
-export default function AppointmentCard({ appointment, onCancel, cancelLoading}) {
+export default function AppointmentCard({ appointment, onCancel, cancelLoading, onPay}) {
   const isCancelling = cancelLoading === appointment.id;
   const status = appointment.status?.toLowerCase();
 
@@ -126,7 +126,7 @@ export default function AppointmentCard({ appointment, onCancel, cancelLoading})
             )}
           </button>
           
-          <button className="flex-1 inline-flex items-center justify-center h-10 px-4 rounded-xl bg-[#2b4c50] text-white text-xs font-bold hover:bg-blue-custom transition-colors shadow-sm hover:cursor-pointer">
+          <button onClick={onPay} className="flex-1 inline-flex items-center justify-center h-10 px-4 rounded-xl bg-[#2b4c50] text-white text-xs font-bold hover:bg-blue-custom transition-colors shadow-sm hover:cursor-pointer">
             Bayar Sekarang
           </button>
         </div>
