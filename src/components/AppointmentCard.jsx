@@ -1,6 +1,6 @@
 import { CalendarDays, Clock, Loader2, Stethoscope } from "lucide-react";
 
-export default function AppointmentCard({ appointment, onCancel, cancelLoading }) {
+export default function AppointmentCard({ appointment, onCancel, cancelLoading}) {
   const isCancelling = cancelLoading === appointment.id;
   const status = appointment.status?.toLowerCase();
 
