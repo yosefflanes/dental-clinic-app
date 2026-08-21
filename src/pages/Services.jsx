@@ -26,7 +26,7 @@ export default function Services() {
   }, []);
 
   return (
-    <section className="max-w-6xl mx-auto py-24 px-6 min-h-screen">
+    <section className="max-w-6xl mx-auto py-24 px-6 min-h-screen mt-10">
       <div className="text-center mb-16 animate-in fade-in slide-in-from-bottom-4 duration-500">
         <h2 className="text-3xl md:text-4xl font-extrabold text-slate-800 mb-4">
           Layanan Klinik Kami
