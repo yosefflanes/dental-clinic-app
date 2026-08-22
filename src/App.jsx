@@ -9,6 +9,8 @@ import MyAppointment from "./pages/MyAppointment";
 import Services from "./pages/Services";
 import AdminSidebar from "./components/AdminSidebar";
 import AdminDashboard from "./pages/AdminDashboard";
+import AdminAppointments from "./pages/AdminAppointments";
+import AdminServices from "./pages/AdminServices";
 
 function App() {
   return (
@@ -20,6 +22,24 @@ function App() {
           element={
             <AdminSidebar>
               <AdminDashboard />
+            </AdminSidebar>
+          }
+        />
+
+        <Route
+          path="/admin/appointments"
+          element={
+            <AdminSidebar>
+              <AdminAppointments />
+            </AdminSidebar>
+          }
+        />
+
+        <Route
+          path="/admin/services"
+          element={
+            <AdminSidebar>
+              <AdminServices />
             </AdminSidebar>
           }
         />
