@@ -22,8 +22,12 @@ export default function AdminDashboard() {
         setLoading(true);
         const response = await apiRequest("/reports");
         
-        if (response.data && response.data.data) {
-          setStats(response.data.data);
+        console.log("Data Response Reports:", response);
+
+        if (response && response.data) {
+          setStats(response.data);
+        } else if (response && response.summary) {
+          setStats(response);
         }
       } catch (error) {
         console.error("Gagal mengambil data dashboard:", error);
@@ -43,8 +47,8 @@ export default function AdminDashboard() {
     );
   }
 
-  const summary = stats.summary || {};
-  const topServices = stats.top_services || [];
+  const summary = stats?.summary || {};
+  const topServices = stats?.top_services || [];
 
   return (
     <div className="space-y-8 p-2">
@@ -58,19 +62,19 @@ export default function AdminDashboard() {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <StatCard 
           title="Total Appointment" 
-          value={summary.total_appointments} 
+          value={summary.total_appointments ?? 0} 
           icon={<CalendarCheck className="w-6 h-6 text-blue-600" />} 
           bgColor="bg-blue-50"
         />
         <StatCard 
           title="Estimasi Pendapatan" 
-          value={`Rp ${(summary.estimated_revenue || 0).toLocaleString("id-ID")}`} 
+          value={`Rp ${(summary.estimated_revenue ?? 0).toLocaleString("id-ID")}`} 
           icon={<DollarSign className="w-6 h-6 text-emerald-600" />} 
           bgColor="bg-emerald-50"
         />
         <StatCard 
           title="Antrean Pending" 
-          value={summary.pending_appointments} 
+          value={summary.pending_appointments ?? 0} 
           icon={<Users className="w-6 h-6 text-amber-600" />} 
           bgColor="bg-amber-50"
         />
