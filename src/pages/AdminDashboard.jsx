@@ -21,7 +21,8 @@ export default function AdminDashboard() {
       try {
         setLoading(true);
         const response = await apiRequest("/reports");
-
+        
+        // Memastikan response.data.data masuk dengan benar ke state
         if (response.data && response.data.data) {
           setStats(response.data.data);
         }
@@ -43,6 +44,7 @@ export default function AdminDashboard() {
     );
   }
 
+  // Mengambil data dari objek summary secara aman
   const summary = stats.summary || {};
   const topServices = stats.top_services || [];
 
@@ -51,29 +53,27 @@ export default function AdminDashboard() {
       {/* HEADER */}
       <div>
         <h1 className="text-3xl font-bold text-gray-800">Dashboard Utama</h1>
-        <p className="text-gray-500">
-          Selamat datang kembali, Admin. Berikut ringkasan operasional klinik.
-        </p>
+        <p className="text-gray-500">Selamat datang kembali, Admin. Berikut ringkasan operasional klinik.</p>
       </div>
 
       {/* STATS CARDS */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <StatCard
-          title="Total Appointment"
-          value={summary.total_appointments || 0}
-          icon={<CalendarCheck className="w-6 h-6 text-blue-600" />}
+        <StatCard 
+          title="Total Appointment" 
+          value={summary.total_appointments} 
+          icon={<CalendarCheck className="w-6 h-6 text-blue-600" />} 
           bgColor="bg-blue-50"
         />
-        <StatCard
-          title="Estimasi Pendapatan (Selesai)"
-          value={`Rp ${(summary.estimated_revenue || 0).toLocaleString("id-ID")}`}
-          icon={<DollarSign className="w-6 h-6 text-emerald-600" />}
+        <StatCard 
+          title="Estimasi Pendapatan" 
+          value={`Rp ${(summary.estimated_revenue || 0).toLocaleString("id-ID")}`} 
+          icon={<DollarSign className="w-6 h-6 text-emerald-600" />} 
           bgColor="bg-emerald-50"
         />
-        <StatCard
-          title="Antrean Selesai"
-          value={summary.completed_appointments || 0}
-          icon={<Users className="w-6 h-6 text-amber-600" />}
+        <StatCard 
+          title="Antrean Pending" 
+          value={summary.pending_appointments} 
+          icon={<Users className="w-6 h-6 text-amber-600" />} 
           bgColor="bg-amber-50"
         />
       </div>
@@ -82,9 +82,7 @@ export default function AdminDashboard() {
       <div className="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
         <div className="p-6 border-b border-gray-100 flex items-center gap-2">
           <Award className="w-5 h-5 text-[#2b4c50]" />
-          <h2 className="font-bold text-gray-800">
-            Layanan Terlaris (Top Services)
-          </h2>
+          <h2 className="font-bold text-gray-800">Layanan Terlaris (Top Services)</h2>
         </div>
         <table className="w-full text-left">
           <thead className="bg-gray-50 text-xs uppercase text-gray-500 font-semibold">
@@ -102,7 +100,7 @@ export default function AdminDashboard() {
                     {item.service?.name || "Layanan Reguler"}
                   </td>
                   <td className="px-6 py-4 text-gray-600">
-                    Rp {(item.service?.price || 0).toLocaleString("id-ID")}
+                    Rp {(Number(item.service?.price) || 0).toLocaleString("id-ID")}
                   </td>
                   <td className="px-6 py-4 text-center">
                     <span className="px-3 py-1 rounded-full text-xs font-bold bg-blue-50 text-blue-700">
