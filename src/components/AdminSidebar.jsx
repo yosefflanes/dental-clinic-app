@@ -1,13 +1,20 @@
 import { Link, useNavigate } from "react-router-dom";
+import { useAuth } from "@/context/AuthContext";
 import { LayoutDashboard, Calendar, Stethoscope, LogOut } from "lucide-react";
 
 export default function AdminSidebar({ children }) {
   const navigate = useNavigate();
+  const {logout} = useAuth();
 
   const handleLogout = async () => {
-    localStorage.removeItem("token");
+    if (logout){
+      await logout();
+    } else {
+      localStorage.removeItem("token");
     localStorage.removeItem("user");
-    navigate("/login");
+    }
+    navigate("/");
+    window.location.reload();
   };
 
   return (
