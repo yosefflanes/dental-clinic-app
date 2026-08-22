@@ -1,6 +1,6 @@
 import { Footer } from "./components/Footer";
 import { ReactLenis } from "lenis/react";
-import { Route, Routes } from "react-router-dom";
+import { Navigate, Route, Routes } from "react-router-dom";
 import Navbar from "./components/Navbar";
 import ProtectedRoute from "./components/ProtectedRoute";
 import Appointment from "./pages/Appointment";
@@ -13,6 +13,10 @@ import AdminAppointments from "./pages/AdminAppointments";
 import AdminServices from "./pages/AdminServices";
 
 function App() {
+  const userStr = localStorage.getItem("user");
+  const user = userStr ? JSON.parse(userStr) : null;
+  const isAdmin = user?.role === "admin";
+
   return (
     <ReactLenis root>
       <Routes>
@@ -49,7 +53,6 @@ function App() {
         />
 
         {/* ================= RUTE UTAMA & PUBLIK ================= */}
-        {/* Halaman Home bisa diakses siapa saja (publik) */}
         <Route
           path="/"
           element={
@@ -97,13 +100,11 @@ function App() {
         <Route
           path="*"
           element={
-            <>
-              <Navbar />
-              <div className="min-h-[60vh] flex items-center justify-center text-slate-500 font-medium">
-                Halaman tidak ditemukan.
-              </div>
-              <Footer />
-            </>
+            isAdmin ? (
+              <Navigate to="/admin/dashboard" replace />
+            ) : (
+              <Navigate to="/" replace />
+            )
           }
         />
       </Routes>
