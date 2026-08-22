@@ -73,6 +73,91 @@ export default function MyAppointment() {
     }
   };
 
+  const handlePayment = async (id) => {
+    setModal({
+      isOpen: true,
+      type: "confirm",
+      message: "Lanjutkan ke proses pembayaran untuk appointment ini?",
+      onConfirm: () => executePayment(id),
+    });
+  };
+
+  const executePayment = async (id) => {
+    setModal((prev) => ({ ...prev, isOpen: false }));
+
+    try {
+      const response = await apiRequest("/payments", {
+        method: "POST",
+        body: { appointment_id: id },
+      });
+
+      const snapToken =
+        response.data?.snap_token || response.data?.data?.snap_token;
+
+      if (!snapToken) {
+        throw new Error("Token pembayaran tidak ditemukan.");
+      }
+
+      // Fungsi pembantu untuk memanggil popup midtrans
+      const payWithMidtrans = () => {
+        window.snap.pay(snapToken, {
+          onSuccess: function (result) {
+            console.log("Berhasil bayar:", result);
+            setModal({
+              isOpen: true,
+              type: "success",
+              message: "Pembayaran berhasil diterima! Terima kasih.",
+              onConfirm: () => fetchAppointments(),
+            });
+          },
+          onPending: function (result) {
+            console.log("Menunggu pembayaran:", result);
+
+            setModal({
+              isOpen: true,
+              type: "success",
+              message: "Menunggu pembayaran Anda diselesaikan.",
+              onConfirm: () => fetchAppointments(),
+            });
+          },
+          onError: function (result) {
+            console.log("Pembayaran gagal atau dibatalkan:", result);
+            setModal({
+              isOpen: true,
+              type: "error",
+              message: "Pembayaran gagal atau dibatalkan.",
+              onConfirm: null,
+            });
+          },
+          onClose: function () {
+            fetchAppointments();
+          },
+        });
+      };
+
+      if (!window.snap) {
+        const script = document.createElement("script");
+        script.src = "https://app.sandbox.midtrans.com/snap/snap.js";
+        script.setAttribute("data-client-key", "Mid-client-l8vNUtvAwpkS4GGm");
+
+        script.onload = () => {
+          payWithMidtrans();
+        };
+
+        document.body.appendChild(script);
+      } else {
+        payWithMidtrans();
+      }
+    } catch (error) {
+      setModal({
+        isOpen: true,
+        type: "error",
+        message: error.message || "Gagal melakukan pembayaran",
+        onConfirm: null,
+      });
+    }
+  };
+
   if (loading) {
     return (
       <div className="flex justify-center items-center min-h-[60vh]">
@@ -121,6 +206,7 @@ export default function MyAppointment() {
                 key={appt.id}
                 appointment={normalizedAppt}
                 onCancel={handleCancelClick}
+                onPay={handlePayment}
                 cancelLoading={cancelLoading}
               />
             );
