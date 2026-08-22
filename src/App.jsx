@@ -16,60 +16,92 @@ function App() {
   return (
     <ReactLenis root>
       <Routes>
-        {/* RUTE ADMIN (Hanya Sidebar, Tanpa Navbar/Footer User) */}
+        {/* ================= RUTE KHUSUS ADMIN ================= */}
         <Route
           path="/admin/dashboard"
           element={
-            <AdminSidebar>
-              <AdminDashboard />
-            </AdminSidebar>
+            <ProtectedRoute requireAdmin={true}>
+              <AdminSidebar>
+                <AdminDashboard />
+              </AdminSidebar>
+            </ProtectedRoute>
           }
         />
-
         <Route
           path="/admin/appointments"
           element={
-            <AdminSidebar>
-              <AdminAppointments />
-            </AdminSidebar>
+            <ProtectedRoute requireAdmin={true}>
+              <AdminSidebar>
+                <AdminAppointments />
+              </AdminSidebar>
+            </ProtectedRoute>
           }
         />
-
         <Route
           path="/admin/services"
           element={
-            <AdminSidebar>
-              <AdminServices />
-            </AdminSidebar>
+            <ProtectedRoute requireAdmin={true}>
+              <AdminSidebar>
+                <AdminServices />
+              </AdminSidebar>
+            </ProtectedRoute>
           }
         />
 
-        {/* RUTE USER / PUBLIK (Menggunakan Navbar dan Footer) */}
+        {/* ================= RUTE UTAMA & PUBLIK ================= */}
+        {/* Halaman Home bisa diakses siapa saja (publik) */}
+        <Route
+          path="/"
+          element={
+            <>
+              <Navbar />
+              <Home />
+              <Footer />
+            </>
+          }
+        />
+
+        {/* ================= RUTE KHUSUS USER (DIAMANKAN) ================= */}
+        <Route
+          path="/services"
+          element={
+            <ProtectedRoute requireUser={true}>
+              <Navbar />
+              <Services />
+              <Footer />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/appointment"
+          element={
+            <ProtectedRoute requireUser={true}>
+              <Navbar />
+              <Appointment />
+              <Footer />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/appointment/my"
+          element={
+            <ProtectedRoute requireUser={true}>
+              <Navbar />
+              <MyAppointment />
+              <Footer />
+            </ProtectedRoute>
+          }
+        />
+
+        {/* Fallback jika URL tidak ditemukan */}
         <Route
           path="*"
           element={
             <>
               <Navbar />
-              <Routes>
-                <Route path="/" element={<Home />} />
-                <Route
-                  path="/appointment"
-                  element={
-                    <ProtectedRoute>
-                      <Appointment />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path="/appointment/my"
-                  element={
-                    <ProtectedRoute>
-                      <MyAppointment />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route path="/services" element={<Services />} />
-              </Routes>
+              <div className="min-h-[60vh] flex items-center justify-center text-slate-500 font-medium">
+                Halaman tidak ditemukan.
+              </div>
               <Footer />
             </>
           }
