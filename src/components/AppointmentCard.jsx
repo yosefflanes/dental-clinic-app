@@ -50,14 +50,15 @@ export default function AppointmentCard({
           iconColor: "text-red-600",
           label: "Dibatalkan",
         };
-        case "lunas":
-        case "paid":
-          return {
-            badge: "bg-blue-100 text-blue-800 border border-blue-300 font-semibold",
-            iconBg: "bg-blue-50",
-            iconColor: "text-blue-600",
-            label: "Lunas / Menunggu Hari H",
-          };
+      case "lunas":
+      case "paid":
+        return {
+          badge:
+            "bg-blue-100 text-blue-800 border border-blue-300 font-semibold",
+          iconBg: "bg-blue-50",
+          iconColor: "text-blue-600",
+          label: "Lunas / Menunggu Hari H",
+        };
       default:
         return {
           badge:
@@ -161,6 +162,14 @@ export default function AppointmentCard({
           >
             Bayar Sekarang
           </button>
+        </div>
+      )}
+      {/* KETERANGAN JIKA SUDAH LUNAS */}
+      {appointment.payment && appointment.payment.status === "settlement" && (
+        <div className="pt-4 border-t border-zinc-100 text-center">
+          <span className="text-xs font-bold text-emerald-600 bg-emerald-50 px-3 py-1.5 rounded-lg inline-block w-full">
+            ✓ Pembayaran Berhasil (Menunggu Jadwal Kunjungan)
+          </span>
         </div>
       )}
     </div>
