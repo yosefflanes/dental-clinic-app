@@ -141,37 +141,37 @@ export default function AppointmentCard({
         </div>
       </div>
 
-      {/* BAWAH: Tombol Aksi (Hanya muncul jika status pending) */}
-      {status === "pending" && (
-        <div className="pt-4 border-t border-zinc-100 flex gap-3">
-          <button
-            onClick={() => onCancel(appointment.id)}
-            disabled={isCancelling}
-            className="flex-1 inline-flex items-center justify-center h-10 px-4 rounded-xl text-red-600 text-xs font-bold bg-red-50 hover:bg-red-100 transition-colors disabled:opacity-50 hover:cursor-pointer"
-          >
-            {isCancelling ? (
-              <Loader2 className="w-4 h-4 animate-spin" />
-            ) : (
-              "Batalkan Janji"
-            )}
-          </button>
+      {/* BAWAH: Tombol Aksi atau Keterangan Lunas */}
+      <div className="pt-4 border-t border-zinc-100">
+        {appointment.payment && appointment.payment.status === "settlement" ? (
+          <div className="text-center">
+            <span className="text-xs font-bold text-emerald-600 bg-emerald-50 px-3 py-2 rounded-lg inline-block w-full">
+              ✓ Pembayaran Berhasil (Menunggu Jadwal Kunjungan)
+            </span>
+          </div>
+        ) : (
+          <div className="flex gap-3">
+            <button
+              onClick={() => onCancel(appointment.id)}
+              disabled={isCancelling}
+              className="flex-1 inline-flex items-center justify-center h-10 px-4 rounded-xl text-red-600 text-xs font-bold bg-red-50 hover:bg-red-100 transition-colors disabled:opacity-50 hover:cursor-pointer"
+            >
+              {isCancelling ? (
+                <Loader2 className="w-4 h-4 animate-spin" />
+              ) : (
+                "Batalkan Janji"
+              )}
+            </button>
 
-          <button
-            onClick={() => onPay(appointment.id)}
-            className="flex-1 inline-flex items-center justify-center h-10 px-4 rounded-xl bg-[#2b4c50] text-white text-xs font-bold hover:bg-blue-custom transition-colors shadow-sm hover:cursor-pointer"
-          >
-            Bayar Sekarang
-          </button>
-        </div>
-      )}
-      {/* KETERANGAN JIKA SUDAH LUNAS */}
-      {appointment.payment && appointment.payment.status === "settlement" && (
-        <div className="pt-4 border-t border-zinc-100 text-center">
-          <span className="text-xs font-bold text-emerald-600 bg-emerald-50 px-3 py-1.5 rounded-lg inline-block w-full">
-            ✓ Pembayaran Berhasil (Menunggu Jadwal Kunjungan)
-          </span>
-        </div>
-      )}
+            <button
+              onClick={() => onPay(appointment.id)}
+              className="flex-1 inline-flex items-center justify-center h-10 px-4 rounded-xl bg-[#2b4c50] text-white text-xs font-bold hover:bg-blue-custom transition-colors shadow-sm hover:cursor-pointer"
+            >
+              Bayar Sekarang
+            </button>
+          </div>
+        )}
+      </div>
     </div>
   );
 }
