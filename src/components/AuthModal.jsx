@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { X, Eye, EyeOff, Loader2 } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
+import { useNavigate } from "react-router-dom";
 
 const INITIAL_FORM_DATA = {
   name: "",
@@ -23,6 +24,8 @@ export function AuthModal({ isOpen, onClose, initialView = "login" }) {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (isOpen) {
@@ -77,6 +80,13 @@ export function AuthModal({ isOpen, onClose, initialView = "login" }) {
 
     if (result.success) {
       onClose();
+      const user = JSON.parse(localStorage.getItem("user"));
+
+      if (user?.role === "admin"){
+        navigate("/admin/dashboard");
+      } else {
+        navigate("/");
+      }
     } else {
       if (result.errors && typeof result.errors === "object") {
         const firstErrorKey = Object.keys(result.errors)[0];

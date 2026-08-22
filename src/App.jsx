@@ -7,32 +7,54 @@ import Appointment from "./pages/Appointment";
 import Home from "./pages/Home";
 import MyAppointment from "./pages/MyAppointment";
 import Services from "./pages/Services";
+import AdminSidebar from "./components/AdminSidebar";
+import AdminDashboard from "./pages/AdminDashboard";
 
 function App() {
   return (
     <ReactLenis root>
-      <Navbar />
       <Routes>
-        <Route path="/" element={<Home />} />
+        {/* RUTE ADMIN (Hanya Sidebar, Tanpa Navbar/Footer User) */}
         <Route
-          path="/appointment"
+          path="/admin/dashboard"
           element={
-            <ProtectedRoute>
-              <Appointment />
-            </ProtectedRoute>
+            <AdminSidebar>
+              <AdminDashboard />
+            </AdminSidebar>
           }
         />
+
+        {/* RUTE USER / PUBLIK (Menggunakan Navbar dan Footer) */}
         <Route
-          path="/appointment/my"
+          path="*"
           element={
-            <ProtectedRoute>
-              <MyAppointment />
-            </ProtectedRoute>
+            <>
+              <Navbar />
+              <Routes>
+                <Route path="/" element={<Home />} />
+                <Route
+                  path="/appointment"
+                  element={
+                    <ProtectedRoute>
+                      <Appointment />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/appointment/my"
+                  element={
+                    <ProtectedRoute>
+                      <MyAppointment />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route path="/services" element={<Services />} />
+              </Routes>
+              <Footer />
+            </>
           }
         />
-        <Route path="/services" element={<Services />} />
       </Routes>
-      <Footer />
     </ReactLenis>
   );
 }
