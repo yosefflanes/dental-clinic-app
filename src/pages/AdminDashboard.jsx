@@ -22,7 +22,6 @@ export default function AdminDashboard() {
         setLoading(true);
         const response = await apiRequest("/reports");
         
-        // Memastikan response.data.data masuk dengan benar ke state
         if (response.data && response.data.data) {
           setStats(response.data.data);
         }
@@ -44,7 +43,6 @@ export default function AdminDashboard() {
     );
   }
 
-  // Mengambil data dari objek summary secara aman
   const summary = stats.summary || {};
   const topServices = stats.top_services || [];
 
