@@ -146,7 +146,7 @@ export function AuthModal({ isOpen, onClose, initialView = "login" }) {
                   value={formData.name}
                   onChange={handleChange}
                   className="flex h-11 w-full rounded-lg border border-zinc-300 bg-transparent px-3 py-2 text-sm placeholder:text-zinc-400 focus:outline-none focus:ring-2 focus:ring-blue-custom"
-                  placeholder="John Doe"
+                  placeholder="Masukkan nama lengkap"
                   required
                 />
               </div>
