@@ -50,6 +50,14 @@ export default function AppointmentCard({
           iconColor: "text-red-600",
           label: "Dibatalkan",
         };
+        case "lunas":
+        case "paid":
+          return {
+            badge: "bg-blue-100 text-blue-800 border border-blue-300 font-semibold",
+            iconBg: "bg-blue-50",
+            iconColor: "text-blue-600",
+            label: "Lunas / Menunggu Hari H",
+          };
       default:
         return {
           badge:
