@@ -141,9 +141,16 @@ export default function AppointmentCard({
         </div>
       </div>
 
-      {/* BAWAH: Tombol Aksi atau Keterangan Lunas */}
+      {/* BAWAH: Tombol Aksi atau Keterangan Status */}
       <div className="pt-4 border-t border-zinc-100">
-        {appointment.payment && appointment.payment.status === "settlement" ? (
+        {status === "batal" || status === "cancelled" ? (
+          <div className="text-center">
+            <span className="text-xs font-bold text-red-600 bg-red-50 px-3 py-2 rounded-lg inline-block w-full">
+              X Appointment ini telah dibatalkan.
+            </span>
+          </div>
+        ) : appointment.payment &&
+          appointment.payment.status === "settlement" ? (
           <div className="text-center">
             <span className="text-xs font-bold text-emerald-600 bg-emerald-50 px-3 py-2 rounded-lg inline-block w-full">
               ✓ Pembayaran Berhasil (Menunggu Jadwal Kunjungan)
