@@ -180,13 +180,13 @@ export default function MyAppointment() {
       {appointments.length === 0 ? (
         <div className="bg-white p-10 rounded-3xl shadow-sm border border-slate-100 text-center">
           <p className="text-slate-500 mb-4">
-            Kamu belum memiliki riwayat janji temu.
+            Kamu belum memiliki riwayat appointment.
           </p>
           <Button
             onClick={() => (window.location.href = "/appointment")}
-            className="bg-blue-custom hover:bg-blue-dark"
+            className="bg-blue-custom hover:bg-blue-dark hover:cursor-pointer"
           >
-            Buat Janji Temu Sekarang
+            Buat Appointment Sekarang
           </Button>
         </div>
       ) : (
