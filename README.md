@@ -8,7 +8,7 @@
 A modern, responsive, and secure Single Page Application (SPA) built with **React, Vite, and Tailwind CSS** to serve as the user and admin interface for the Dental Clinic Management System. It features strict role-based access control, interactive appointment booking, service catalogs, and a comprehensive management dashboard.
 
 ---
-## 🌐 Live Demo
+## 🌐 Live Demo using Vercel
 Experience the live application here:  
 👉 **https://dental-clinic-lanz2.vercel.app/**
 
