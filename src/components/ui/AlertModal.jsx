@@ -16,9 +16,9 @@ export default function AlertModal({
   const renderIcon = () => {
     switch (type) {
       case "confirm":
-        return <AlertTriangle className="h-14 w-14 text-yellow-500 mb-4" />;
+        return <AlertTriangle className="h-14 w-14 text-amber-500 mb-4" />;
       case "success":
-        return <CheckCircle2 className="h-14 w-14 text-green-500 mb-4" />;
+        return <CheckCircle2 className="h-14 w-14 text-emerald-500 mb-4" />;
       case "error":
         return <XCircle className="h-14 w-14 text-red-500 mb-4" />;
       default:
@@ -61,7 +61,7 @@ export default function AlertModal({
                 Tidak
               </Button>
               <Button
-                className={`flex-1 text-white transition-colors ${confirmVariant === "danger" ? "bg-red-500 hover:bg-red-600" : "bg-blue-custom hover:bg-blue-dark"}`}
+                className={`flex-1 text-white transition-colors ${confirmVariant === "danger" ? "bg-red-500 hover:bg-red-600" : "bg-teal-700 hover:bg-teal-800"}`}
                 onClick={onConfirm}
               >
                 Ya, Lanjutkan
@@ -69,7 +69,7 @@ export default function AlertModal({
             </>
           ) : (
             <Button
-              className="w-full bg-blue-custom hover:bg-blue-dark text-white"
+              className="w-full bg-teal-700 hover:bg-teal-800 text-white"
               onClick={onClose}
             >
               Tutup
