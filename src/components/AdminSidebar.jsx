@@ -8,6 +8,7 @@ import {
   Menu,
   X,
   Stethoscope,
+  CalendarDays,
 } from "lucide-react";
 
 export default function AdminSidebar({ children }) {
@@ -37,6 +38,11 @@ export default function AdminSidebar({ children }) {
       name: "Kelola Layanan",
       path: "/admin/services",
       icon: <BriefcaseMedical className="w-5 h-5" />,
+    },
+    {
+      name: "Kelola Jadwal",
+      path: "/admin/schedules",
+      icon: <CalendarDays className="w-5 h-5" />
     },
   ];
 
