@@ -1,8 +1,12 @@
 import { useState, useEffect } from "react";
 import { apiRequest } from "../api/apiRequest";
 import { BriefcaseMedical, Loader2, Plus, Trash2, Pen, X } from "lucide-react";
+import { useAlert } from "@/hooks/useAlert";
+import AlertModal from "@/components/ui/AlertModal";
 
 export default function AdminServices() {
+  const { isModalOpen: isAlertOpen, modalConfig, showAlert, closeAlert } = useAlert();
+  
   const [services, setServices] = useState([]);
   const [loading, setLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -48,18 +52,46 @@ export default function AdminServices() {
       }
       closeModal();
       fetchServices();
+      showAlert({
+        type: "success",
+        title: "Berhasil!",
+        message: "Data layanan berhasil disimpan.",
+      });
     } catch (error) {
-      alert(error.message || "Gagal menyimpan data layanan");
+      showAlert({
+        type: "error",
+        title: "Gagal Menyimpan",
+        message: error.message || "Gagal menyimpan data layanan",
+      });
     }
   };
 
-  const handleDelete = async (id) => {
-    if (!confirm("Hapus layanan ini secara permanen?")) return;
+  const confirmDelete = (id) => {
+    showAlert({
+      type: "confirm",
+      title: "Hapus Layanan?",
+      message: "Apakah Anda yakin ingin menghapus layanan ini secara permanen? Tindakan ini tidak dapat dibatalkan.",
+      confirmVariant: "danger",
+      onConfirm: () => executeDelete(id),
+    });
+  };
+
+  const executeDelete = async (id) => {
+    closeAlert();
     try {
       await apiRequest(`/services/${id}`, { method: "DELETE" });
       fetchServices();
+      showAlert({
+        type: "success",
+        title: "Berhasil Dihapus",
+        message: "Layanan telah dihapus secara permanen.",
+      });
     } catch (error) {
-      alert(error.message || "Gagal menghapus layanan");
+      showAlert({
+        type: "error",
+        title: "Gagal Menghapus",
+        message: error.message || "Gagal menghapus layanan",
+      });
     }
   };
 
@@ -69,7 +101,7 @@ export default function AdminServices() {
       name: service.name,
       description: service.description || "",
       price: service.price,
-      is_active: service.is_active ?? true, // Menyesuaikan data dari backend
+      is_active: service.is_active ?? true,
     });
     setIsModalOpen(true);
   };
@@ -109,7 +141,7 @@ export default function AdminServices() {
       </div>
 
       {/* TABLE CONTAINER */}
-      <div className={`bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden transition-all duration-300 ${isModalOpen ? 'blur-[2px]' : ''}`}>
+      <div className={`bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden transition-all duration-300 ${isModalOpen || isAlertOpen ? 'blur-[2px]' : ''}`}>
         <div className="px-4 md:px-6 py-4 md:py-5 border-b border-slate-100 flex items-center gap-3 bg-white">
           <BriefcaseMedical className="w-5 h-5 text-[#14b8a6] shrink-0" />
           <h2 className="text-base md:text-lg font-bold text-slate-800 m-0">Daftar Layanan Tersedia</h2>
@@ -161,7 +193,7 @@ export default function AdminServices() {
                           <Pen className="w-4 h-4 md:w-4.5 md:h-4.5" strokeWidth={2.5} />
                         </button>
                         <button
-                          onClick={() => handleDelete(srv.id)}
+                          onClick={() => confirmDelete(srv.id)}
                           className="w-8 h-8 md:w-9 md:h-9 flex items-center justify-center rounded-lg bg-red-100 text-red-600 hover:bg-red-200 transition-colors"
                           title="Hapus"
                         >
@@ -181,7 +213,7 @@ export default function AdminServices() {
         </div>
       </div>
 
-      {/* MODAL OVERLAY (Kini ada Checkbox is_active untuk Tambah dan Edit) */}
+      {/* MODAL OVERLAY FORM TAMBAH/EDIT */}
       {isModalOpen && (
         <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm flex justify-center items-center z-50 p-4 overflow-y-auto">
           <div className="bg-white rounded-[20px] w-full max-w-125 p-6 md:p-8 shadow-2xl animate-in fade-in zoom-in duration-200 my-auto">
@@ -231,7 +263,7 @@ export default function AdminServices() {
                 />
               </div>
 
-              {/* CHECKBOX STATUS AKTIF (Kini muncul saat Tambah maupun Edit) */}
+              {/* CHECKBOX STATUS AKTIF */}
               <div className="flex items-center gap-2.5 pt-1 bg-slate-50 p-3 rounded-xl border border-slate-200">
                 <input 
                   type="checkbox" 
@@ -264,6 +296,16 @@ export default function AdminServices() {
           </div>
         </div>
       )}
+
+      <AlertModal
+        isOpen={isAlertOpen}
+        type={modalConfig.type}
+        title={modalConfig.title}
+        message={modalConfig.message}
+        confirmVariant={modalConfig.confirmVariant}
+        onClose={closeAlert}
+        onConfirm={modalConfig.onConfirm}
+      />
     </div>
   );
 }
