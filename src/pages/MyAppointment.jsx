@@ -3,7 +3,7 @@ import { apiRequest } from "../api/apiRequest";
 import { Button } from "@/components/ui/button";
 import { Loader2 } from "lucide-react";
 import { useAlert } from "@/hooks/useAlert";
-import AlertModal from "@/components/AlertModal";
+import AlertModal from "@/components/ui/AlertModal";
 import AppointmentCard from "@/components/AppointmentCard";
 
 export default function MyAppointment() {
