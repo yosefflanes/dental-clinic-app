@@ -1,6 +1,6 @@
 import { FiCheck, FiShield, FiDollarSign, FiCalendar } from "react-icons/fi";
 import { BsPatchCheckFill } from "react-icons/bs";
-import { FeatureCard } from "./FeatureCard";
+import { FeatureCard } from "./ui/FeatureCard";
 import { TestimoniSection } from "./TestimoniSection";
 
 export const Main = () => {
