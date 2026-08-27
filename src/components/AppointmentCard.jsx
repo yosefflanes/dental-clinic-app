@@ -143,10 +143,16 @@ export default function AppointmentCard({
 
       {/* BAWAH: Tombol Aksi atau Keterangan Status */}
       <div className="pt-4 border-t border-zinc-100">
-        {status === "batal" || status === "cancelled" ? (
+        {status === "selesai" || status === "completed" ? (
+          <div className="text-center">
+            <span className="text-xs font-bold text-emerald-600 bg-emerald-50 px-3 py-2 rounded-lg inline-block w-full">
+              ✓ Kunjungan Telah Selesai
+            </span>
+          </div>
+        ) : status === "batal" || status === "cancelled" ? (
           <div className="text-center">
             <span className="text-xs font-bold text-red-600 bg-red-50 px-3 py-2 rounded-lg inline-block w-full">
-              X Appointment ini telah dibatalkan.
+              ✕ Appointment ini telah dibatalkan.
             </span>
           </div>
         ) : appointment.payment &&
