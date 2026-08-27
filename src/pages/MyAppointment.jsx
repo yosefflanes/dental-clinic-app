@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Loader2 } from "lucide-react";
 import { useAlert } from "@/hooks/useAlert";
 import AlertModal from "@/components/ui/AlertModal";
-import AppointmentCard from "@/components/AppointmentCard";
+import AppointmentCard from "@/components/ui/AppointmentCard";
 
 export default function MyAppointment() {
   const {isModalOpen, modalConfig, showAlert, closeAlert} = useAlert();
