@@ -3,7 +3,6 @@ import {
   FaEnvelope,
   FaGlobe,
   FaMapMarkerAlt,
-  FaHeart,
   FaChevronUp,
 } from "react-icons/fa";
 import { useLenis } from "lenis/react";
@@ -26,21 +25,25 @@ export const Footer = () => {
             <ul className="space-y-4 text-slate-300 text-sm">
               <li className="flex gap-4 items-start">
                 <FaPhoneAlt className="mt-1 shrink-0 text-slate-400" />
-                <span>+6281387705577</span>
+                <p>
+                  <a href="https://wa.me/6281387705577" target="_blank">
+                    <span>+6281387705577</span>
+                  </a>
+                </p>
               </li>
               <li className="flex gap-4 items-center">
                 <FaEnvelope className="shrink-0 text-slate-400" />
-                <span>dentalcare@example.com</span>
+                <span>yosefflanes@gmail.com</span>
               </li>
               <li className="flex gap-4 items-center text-blue-custom">
                 <FaGlobe className="shrink-0 text-slate-400" />
                 <a
-                  href="https://dentalcare.example.com"
+                  href="https://dental-clinic-eta-five.vercel.app/"
                   target="_blank"
                   rel="noreferrer"
                   className="hover:underline"
                 >
-                  dentalcare.example.com
+                  dentalcare.com
                 </a>
               </li>
               <li className="flex gap-4 items-start">
@@ -74,11 +77,15 @@ export const Footer = () => {
 
           {/* Copyright */}
           <div className="flex flex-col lg:items-end text-sm text-slate-400 space-y-1">
-            <p>2023 Dental Care</p>
-            <p className="flex items-center gap-1">
-              Designed with <FaHeart className="text-blue-dark text-sm" /> by
-              Yosef Fernando Lanes
+            <p>
+              <a
+                href="https://www.linkedin.com/in/yosefflanes/"
+                target="_blank"
+              >
+                © 2023 Dental Care
+              </a>
             </p>
+            <p>All Rights Reserved</p>
           </div>
         </div>
       </div>
