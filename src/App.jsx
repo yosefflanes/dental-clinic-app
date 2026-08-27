@@ -11,6 +11,7 @@ import AdminSidebar from "./components/AdminSidebar";
 import AdminDashboard from "./pages/AdminDashboard";
 import AdminAppointments from "./pages/AdminAppointments";
 import AdminServices from "./pages/AdminServices";
+import AdminSchedules from "./pages/AdminSchedules";
 
 function App() {
   const userStr = localStorage.getItem("user");
@@ -47,6 +48,16 @@ function App() {
             <ProtectedRoute requireAdmin={true}>
               <AdminSidebar>
                 <AdminServices />
+              </AdminSidebar>
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="admin/schedules"
+          element={
+            <ProtectedRoute requireAdmin={true}>
+              <AdminSidebar>
+                <AdminSchedules />
               </AdminSidebar>
             </ProtectedRoute>
           }
