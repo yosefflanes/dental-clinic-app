@@ -2,10 +2,12 @@ import { useState, useEffect } from "react";
 import { apiRequest } from "../api/apiRequest";
 import { Button } from "@/components/ui/button";
 import { Loader2 } from "lucide-react";
+import { useAlert } from "@/hooks/useAlert";
 import AlertModal from "@/components/AlertModal";
 import AppointmentCard from "@/components/AppointmentCard";
 
 export default function MyAppointment() {
+  const {isModalOpen, modalConfig, showAlert, closeAlert} = useAlert();
   const [appointments, setAppointments] = useState([]);
   const [loading, setLoading] = useState(true);
   const [cancelLoading, setCancelLoading] = useState(null);
@@ -38,16 +40,17 @@ export default function MyAppointment() {
   }, []);
 
   const handleCancelClick = (id) => {
-    setModal({
-      isOpen: true,
+    showAlert({
       type: "confirm",
+      title: "Batalkan Appointment?",
       message: "Apakah kamu yakin ingin membatalkan appointment ini?",
+      confirmVariant: "danger",
       onConfirm: () => executeCancel(id),
     });
   };
 
   const executeCancel = async (id) => {
-    setModal({ ...modal, isOpen: false });
+    closeAlert();
 
     try {
       setCancelLoading(id);
@@ -55,18 +58,16 @@ export default function MyAppointment() {
       fetchAppointments();
 
       // Tampilkan modal sukses
-      setModal({
-        isOpen: true,
+      showAlert({
         type: "success",
+        title: "Berhasil",
         message: "Appointment berhasil dibatalkan.",
-        onConfirm: null,
       });
     } catch (error) {
-      setModal({
-        isOpen: true,
+      showAlert({
         type: "error",
+        title: "Gagal",
         message: error.message || "Gagal membatalkan appointment.",
-        onConfirm: null,
       });
     } finally {
       setCancelLoading(null);
@@ -74,16 +75,17 @@ export default function MyAppointment() {
   };
 
   const handlePayment = async (id) => {
-    setModal({
-      isOpen: true,
+    showAlert({
       type: "confirm",
+      title: "Lanjutkan Pembayaran?",
       message: "Lanjutkan ke proses pembayaran untuk appointment ini?",
+      confirmVariant: "primary",
       onConfirm: () => executePayment(id),
     });
   };
 
   const executePayment = async (id) => {
-    setModal((prev) => ({ ...prev, isOpen: false }));
+    closeAlert();
 
     try {
       const response = await apiRequest("/payments", {
@@ -103,9 +105,9 @@ export default function MyAppointment() {
         window.snap.pay(snapToken, {
           onSuccess: function (result) {
             console.log("Berhasil bayar:", result);
-            setModal({
-              isOpen: true,
+            showAlert({
               type: "success",
+              title: "Pembayaran Berhasil!",
               message: "Pembayaran berhasil diterima! Terima kasih.",
               onConfirm: () => fetchAppointments(),
             });
@@ -113,20 +115,19 @@ export default function MyAppointment() {
           onPending: function (result) {
             console.log("Menunggu pembayaran:", result);
 
-            setModal({
-              isOpen: true,
+            showAlert({
               type: "success",
-              message: "Menunggu pembayaran Anda diselesaikan.",
+              title: "Menunggu Pembayaran.",
+              message: "Menunggu Pembayaran Anda diselesaikan.",
               onConfirm: () => fetchAppointments(),
             });
           },
           onError: function (result) {
             console.log("Pembayaran gagal atau dibatalkan:", result);
-            setModal({
-              isOpen: true,
+            showAlert({
               type: "error",
+              title: "Pembayaran Gagal",
               message: "Pembayaran gagal atau dibatalkan.",
-              onConfirm: null,
             });
           },
           onClose: function () {
@@ -149,11 +150,10 @@ export default function MyAppointment() {
         payWithMidtrans();
       }
     } catch (error) {
-      setModal({
-        isOpen: true,
+      showAlert({
         type: "error",
+        title: "Gagal",
         message: error.message || "Gagal melakukan pembayaran",
-        onConfirm: null,
       });
     }
   };
@@ -214,11 +214,13 @@ export default function MyAppointment() {
         </div>
       )}
       <AlertModal
-        isOpen={modal.isOpen}
-        type={modal.type}
-        message={modal.message}
-        onClose={() => setModal({ ...modal, isOpen: false })}
-        onConfirm={modal.onConfirm}
+        isOpen={isModalOpen}
+        type={modalConfig.type}
+        title={modalConfig.title}
+        message={modalConfig.message}
+        confirmVariant={modalConfig.confirmVariant}
+        onClose={closeAlert}
+        onConfirm={modalConfig.onConfirm}
       />
     </section>
   );
