@@ -12,7 +12,7 @@ export default function AdminServices() {
     name: "",
     description: "",
     price: "",
-    is_active: true, // Default aktif saat menambah baru
+    is_active: true,
   });
 
   const fetchServices = async () => {
