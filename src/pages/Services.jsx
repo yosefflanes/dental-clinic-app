@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { apiRequest } from "../api/apiRequest";
 import { Loader2 } from "lucide-react";
-import ServiceCard from "@/components/ServiceCard";
+import ServiceCard from "@/components/ui/ServiceCard";
 
 export default function Services() {
   const navigate = useNavigate();
