@@ -1,13 +1,13 @@
-import { Footer } from "./components/Footer";
+import { Footer } from "./components/layouts/Footer";
 import { ReactLenis } from "lenis/react";
 import { Navigate, Route, Routes } from "react-router-dom";
-import Navbar from "./components/Navbar";
+import Navbar from "./components/layouts/Navbar";
 import ProtectedRoute from "./components/ProtectedRoute";
 import Appointment from "./pages/Appointment";
 import Home from "./pages/Home";
 import MyAppointment from "./pages/MyAppointment";
 import Services from "./pages/Services";
-import AdminSidebar from "./components/AdminSidebar";
+import AdminSidebar from "./components/layouts/AdminSidebar";
 import AdminDashboard from "./pages/AdminDashboard";
 import AdminAppointments from "./pages/AdminAppointments";
 import AdminServices from "./pages/AdminServices";
