@@ -4,7 +4,7 @@ import { apiRequest } from "../api/apiRequest";
 import { Loader2 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useAlert } from "@/hooks/useAlert";
-import AlertModal from "@/components/AlertModal";
+import AlertModal from "@/components/ui/AlertModal";
 
 export default function Appointment() {
   const navigate = useNavigate();
