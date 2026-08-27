@@ -1,4 +1,4 @@
-import { CalendarDays, Clock, Loader2, Stethoscope } from "lucide-react";
+import { Loader2 } from "lucide-react";
 
 export default function AppointmentCard({
   appointment,
@@ -7,7 +7,9 @@ export default function AppointmentCard({
   onPay,
 }) {
   const isCancelling = cancelLoading === appointment.id;
-  const status = appointment.status?.toLowerCase();
+  const status = appointment.status?.toLowerCase()?.trim();
+  
+  const isSettled = appointment.payment?.status === "settlement" || appointment.payment?.status === "paid";
 
   const formatDate = (dateString) => {
     if (!dateString || dateString === "-") return "Belum diatur";
@@ -20,171 +22,82 @@ export default function AppointmentCard({
   };
 
   const getStatusConfig = () => {
-    const cleanStatus = status?.trim().toLowerCase();
-
-    switch (cleanStatus) {
-      case "pending":
-      case "menunggu":
-        return {
-          badge:
-            "bg-amber-100 text-amber-800 border border-amber-300 font-semibold",
-          iconBg: "bg-amber-50",
-          iconColor: "text-amber-600",
-          label: "Menunggu",
-        };
+    // 1. PRIORITAS UTAMA: Jika status sudah selesai atau batal
+    switch (status) {
       case "selesai":
       case "completed":
-        return {
-          badge:
-            "bg-emerald-100 text-emerald-800 border border-emerald-300 font-semibold",
-          iconBg: "bg-emerald-50",
-          iconColor: "text-emerald-600",
-          label: "Selesai",
-        };
+        return { dot: "bg-teal-600", text: "text-teal-700", label: "Selesai" };
       case "batal":
       case "cancelled":
-        return {
-          // Kita beri warna merah yang tegas agar langsung terlihat bedanya
-          badge: "bg-red-100 text-red-800 border border-red-300 font-semibold",
-          iconBg: "bg-red-50",
-          iconColor: "text-red-600",
-          label: "Dibatalkan",
-        };
-      case "lunas":
-      case "paid":
-        return {
-          badge:
-            "bg-blue-100 text-blue-800 border border-blue-300 font-semibold",
-          iconBg: "bg-blue-50",
-          iconColor: "text-blue-600",
-          label: "Lunas / Menunggu Hari H",
-        };
+        return { dot: "bg-rose-400", text: "text-rose-600", label: "Dibatalkan" };
       default:
-        return {
-          badge:
-            "bg-zinc-100 text-zinc-800 border border-zinc-300 font-semibold",
-          iconBg: "bg-zinc-100",
-          iconColor: "text-zinc-600",
-          label: status || "Unknown",
-        };
+        break;
+    }
+
+    // 2. PRIORITAS KEDUA: Jika sudah bayar tapi belum selesai/batal
+    if (isSettled) {
+      return { dot: "bg-teal-600", text: "text-teal-700", label: "Lunas · menunggu jadwal" };
+    }
+
+    // 3. PRIORITAS KETIGA: Jika masih pending / menunggu
+    switch (status) {
+      case "pending":
+      case "menunggu":
+        return { dot: "bg-amber-500", text: "text-amber-700", label: "Menunggu konfirmasi" };
+      default:
+        return { dot: "bg-slate-300", text: "text-slate-500", label: status || "Unknown" };
     }
   };
 
   const config = getStatusConfig();
-  const startTime =
-    appointment.doctor_schedule?.start_time?.substring(0, 5) || "--:--";
-  const endTime =
-    appointment.doctor_schedule?.end_time?.substring(0, 5) || "--:--";
+  const startTime = appointment.doctor_schedule?.start_time?.substring(0, 5) || "--:--";
+  const endTime = appointment.doctor_schedule?.end_time?.substring(0, 5) || "--:--";
+  const isCancelled = status === "batal" || status === "cancelled";
+  const isDone = status === "selesai" || status === "completed";
+  
+  // Tombol aksi hilang jika sudah selesai, dibatalkan, atau sudah lunas
+  const isActionable = !isDone && !isCancelled && !isSettled;
 
   return (
-    <div className="bg-white rounded-2xl border border-zinc-200 p-6 flex flex-col justify-between shadow-sm hover:shadow-md transition-all duration-300 hover:bg-blue-50">
-      {/* ATAS: Info Layanan & Status */}
-      <div>
-        <div className="flex justify-between items-start gap-3 mb-4">
-          <div className="flex items-center gap-3">
-            <div
-              className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${config.iconBg}`}
-            >
-              <Stethoscope className={`w-5 h-5 ${config.iconColor}`} />
-            </div>
-            <span className="text-xs font-semibold text-zinc-400 tracking-wider">
-              ID: #{appointment.id?.toString().padStart(4, "0")}
-            </span>
-          </div>
-          <span
-            className={`px-2.5 py-1 rounded-md text-[11px] font-bold uppercase tracking-wider ${config.badge}`}
+    <div className="relative pb-6 last:pb-0">
+      {/* Titik status di garis linimasa */}
+      <span
+        className={`absolute -left-5.75 top-1.5 w-2.5 h-2.5 rounded-full ring-4 ring-white ${config.dot}`}
+      />
+
+      <div className="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-1 mb-1">
+        <span className="text-xs text-slate-400 tabular-nums">
+          {formatDate(appointment.date)} · {startTime}–{endTime} WIB
+        </span>
+        <span className={`text-xs font-medium ${config.text}`}>{config.label}</span>
+      </div>
+
+      <p className={`font-semibold text-slate-800 ${isCancelled ? "line-through text-slate-400" : ""}`}>
+        {appointment.service?.name || "Layanan Reguler"}
+      </p>
+      <p className="text-sm text-slate-500 mb-3">
+        {appointment.doctor?.name || "Dokter Klinik"}
+        <span className="text-slate-300"> · </span>
+        <span className="text-slate-400">#{appointment.id?.toString().padStart(4, "0")}</span>
+      </p>
+
+      {isActionable && (
+        <div className="flex gap-2">
+          <button
+            onClick={() => onCancel(appointment.id)}
+            disabled={isCancelling}
+            className="inline-flex items-center justify-center h-9 px-4 rounded-lg text-rose-600 text-xs font-medium bg-rose-50 hover:bg-rose-100 transition-colors disabled:opacity-50"
           >
-            {config.label}
-          </span>
+            {isCancelling ? <Loader2 className="w-4 h-4 animate-spin" /> : "Batalkan"}
+          </button>
+          <button
+            onClick={() => onPay(appointment.id)}
+            className="inline-flex items-center justify-center h-9 px-4 rounded-lg bg-teal-700 text-white text-xs font-medium hover:bg-teal-800 transition-colors"
+          >
+            Bayar sekarang
+          </button>
         </div>
-
-        <h3 className="font-bold text-zinc-900 text-lg leading-snug mb-1">
-          {appointment.service?.name || "Layanan Reguler"}
-        </h3>
-        <p className="text-sm font-medium text-zinc-500 mb-6">
-          {appointment.doctor?.name || "Dokter Klinik"}
-        </p>
-      </div>
-
-      {/* TENGAH: Garis Pemisah & Jadwal */}
-      <div>
-        <div className="w-full border-t border-zinc-100 mb-5"></div>
-
-        <div className="grid grid-cols-2 gap-4 mb-6">
-          <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-lg bg-zinc-50 flex items-center justify-center shrink-0">
-              <CalendarDays className="w-4 h-4 text-zinc-500" />
-            </div>
-            <div>
-              <p className="text-[10px] font-bold uppercase tracking-widest text-zinc-400 mb-0.5">
-                Tanggal
-              </p>
-              <p className="text-xs font-bold text-zinc-800">
-                {formatDate(appointment.date)}
-              </p>
-            </div>
-          </div>
-
-          <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-lg bg-zinc-50 flex items-center justify-center shrink-0">
-              <Clock className="w-4 h-4 text-zinc-500" />
-            </div>
-            <div>
-              <p className="text-[10px] font-bold uppercase tracking-widest text-zinc-400 mb-0.5">
-                Waktu
-              </p>
-              <p className="text-xs font-bold text-zinc-800">
-                {startTime} - {endTime}
-              </p>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* BAWAH: Tombol Aksi atau Keterangan Status */}
-      <div className="pt-4 border-t border-zinc-100">
-        {status === "selesai" || status === "completed" ? (
-          <div className="text-center">
-            <span className="text-xs font-bold text-emerald-600 bg-emerald-50 px-3 py-2 rounded-lg inline-block w-full">
-              ✓ Kunjungan Telah Selesai
-            </span>
-          </div>
-        ) : status === "batal" || status === "cancelled" ? (
-          <div className="text-center">
-            <span className="text-xs font-bold text-red-600 bg-red-50 px-3 py-2 rounded-lg inline-block w-full">
-              ✕ Appointment ini telah dibatalkan.
-            </span>
-          </div>
-        ) : appointment.payment &&
-          appointment.payment.status === "settlement" ? (
-          <div className="text-center">
-            <span className="text-xs font-bold text-emerald-600 bg-emerald-50 px-3 py-2 rounded-lg inline-block w-full">
-              ✓ Pembayaran Berhasil (Menunggu Jadwal Kunjungan)
-            </span>
-          </div>
-        ) : (
-          <div className="flex gap-3">
-            <button
-              onClick={() => onCancel(appointment.id)}
-              disabled={isCancelling}
-              className="flex-1 inline-flex items-center justify-center h-10 px-4 rounded-xl text-red-600 text-xs font-bold bg-red-50 hover:bg-red-100 transition-colors disabled:opacity-50 hover:cursor-pointer"
-            >
-              {isCancelling ? (
-                <Loader2 className="w-4 h-4 animate-spin" />
-              ) : (
-                "Batalkan Janji"
-              )}
-            </button>
-
-            <button
-              onClick={() => onPay(appointment.id)}
-              className="flex-1 inline-flex items-center justify-center h-10 px-4 rounded-xl bg-[#2b4c50] text-white text-xs font-bold hover:bg-blue-custom transition-colors shadow-sm hover:cursor-pointer"
-            >
-              Bayar Sekarang
-            </button>
-          </div>
-        )}
-      </div>
+      )}
     </div>
   );
 }
