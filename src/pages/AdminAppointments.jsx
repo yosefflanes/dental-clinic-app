@@ -3,7 +3,7 @@ import { apiRequest } from "../api/apiRequest";
 import { ListChecks, Loader2, Check, X } from "lucide-react";
 import { useAlert } from "@/hooks/useAlert";
 import Pagination from "@/components/ui/Pagination";
-import AlertModal from "@/components/AlertModal"; 
+import AlertModal from "@/components/ui/AlertModal"; 
 
 export default function AdminAppointments() {
   const { isModalOpen, modalConfig, showAlert, closeAlert } = useAlert();
