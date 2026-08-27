@@ -8,6 +8,7 @@ export default function AlertModal({
   message,
   onClose,
   onConfirm,
+  confirmVariant = "danger",
 }) {
   if (!isOpen) return null;
 
@@ -60,7 +61,7 @@ export default function AlertModal({
                 Tidak
               </Button>
               <Button
-                className="flex-1 bg-red-500 hover:bg-red-600 text-white"
+                className={`flex-1 text-white transition-colors ${confirmVariant === "danger" ? "bg-red-500 hover:bg-red-600" : "bg-blue-custom hover:bg-blue-dark"}`}
                 onClick={onConfirm}
               >
                 Ya, Lanjutkan
