@@ -1,22 +1,34 @@
 import { useState, useEffect } from "react";
 import { apiRequest } from "../api/apiRequest";
 import { ListChecks, Loader2, Check, X } from "lucide-react";
+import { useAlert } from "@/hooks/useAlert";
+import Pagination from "@/components/ui/Pagination";
+import AlertModal from "@/components/AlertModal"; 
 
 export default function AdminAppointments() {
+  const { isModalOpen, modalConfig, showAlert, closeAlert } = useAlert();
   const [appointments, setAppointments] = useState([]);
   const [loading, setLoading] = useState(true);
   const [updatingId, setUpdatingId] = useState(null);
 
-  const fetchAppointments = async () => {
+  const [currentPage, setCurrentPage] = useState(1);
+  const [lastPage, setLastPage] = useState(1);
+
+  const fetchAppointments = async (page = 1) => {
     try {
       setLoading(true);
-      const response = await apiRequest("/appointments");
-      if (response && response.data) {
-        if (Array.isArray(response.data.data)) {
-          setAppointments(response.data.data);
-        } else if (Array.isArray(response.data)) {
-          setAppointments(response.data);
-        }
+      const response = await apiRequest(`/appointments?page=${page}`);
+      const resBody = response.data ? response.data : response;
+
+      const paginationObject =  resBody.data?.current_page !== undefined ? resBody.data : resBody;
+      if (paginationObject && Array.isArray(paginationObject.data)) {
+        setAppointments(paginationObject.data);
+        setCurrentPage(paginationObject.current_page);
+        setLastPage(paginationObject.last_page);
+      } else if (Array.isArray(resBody.data)) {
+        setAppointments(resBody.data);
+      } else if (Array.isArray(resBody)){
+        setAppointments(resBody);
       }
     } catch (error) {
       console.error("Gagal mengambil data appointment:", error);
@@ -27,20 +39,43 @@ export default function AdminAppointments() {
 
   useEffect(() => {
     // eslint-disable-next-line
-    fetchAppointments();
-  }, []);
+    fetchAppointments(currentPage);
+  }, [currentPage]);
 
-  const handleUpdateStatus = async (id, newStatus) => {
+  const confirmUpdateStatus = (id, newStatus) => {
+    showAlert({
+      type: "confirm",
+      title: newStatus === 'selesai' ? "Tandai Selesai?" : "Batalkan Antrean?",
+      message: newStatus === 'selesai' 
+        ? "Apakah pasien ini sudah selesai ditangani dan pembayaran telah dilunasi?" 
+        : "Apakah Anda yakin ingin membatalkan antrean ini? Tindakan ini tidak dapat dikembalikan.",
+      confirmVariant: newStatus === 'selesai' ? "primary" : "danger",
+      onConfirm: () => executeUpdateStatus(id, newStatus),
+    });
+  };
+
+  const executeUpdateStatus = async (id, newStatus) => {
+    closeAlert(); // Tutup modal konfirmasi
     try {
       setUpdatingId(id);
       await apiRequest(`/appointments/${id}/status`, {
         method: "PATCH",
         body: { status: newStatus },
       });
-      await fetchAppointments();
+      await fetchAppointments(currentPage);
+      
+      showAlert({
+        type: "success",
+        title: "Berhasil!",
+        message: "Status antrean berhasil diperbarui.",
+      });
     } catch (error) {
       console.error("Gagal memperbarui status appointment:", error);
-      alert(error.message || "Gagal memperbarui status");
+      showAlert({
+        type: "error",
+        title: "Gagal Memperbarui",
+        message: error.message || "Terjadi kesalahan pada sistem.",
+      });
     } finally {
       setUpdatingId(null);
     }
@@ -62,15 +97,13 @@ export default function AdminAppointments() {
         <p className="text-slate-500 text-sm md:text-[16px]">Daftar seluruh reservasi dan jadwal kunjungan pasien klinik.</p>
       </div>
 
-      {/* Table Container dengan Wrapper Responsif */}
+      {/* Table Container */}
       <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
-        {/* Table Title */}
         <div className="px-4 md:px-6 py-4 md:py-5 border-b border-slate-100 flex items-center gap-3 bg-white">
           <ListChecks className="w-5 h-5 text-[#14b8a6] shrink-0" />
           <h2 className="text-base md:text-lg font-bold text-slate-800 m-0">Antrean Masuk Hari Ini</h2>
         </div>
 
-        {/* Overflow Container agar aman di Mobile */}
         <div className="w-full overflow-x-auto">
           <table className="w-full text-left border-collapse min-w-187.5">
             <thead className="bg-slate-50">
@@ -124,7 +157,7 @@ export default function AdminAppointments() {
                         <div className="flex items-center justify-center gap-1.5">
                           <button
                             disabled={updatingId === appt.id}
-                            onClick={() => handleUpdateStatus(appt.id, 'selesai')}
+                            onClick={() => confirmUpdateStatus(appt.id, 'selesai')}
                             className="w-8 h-8 flex items-center justify-center rounded-lg bg-emerald-100 text-emerald-600 hover:bg-emerald-200 transition-colors"
                             title="Tandai Selesai"
                           >
@@ -132,7 +165,7 @@ export default function AdminAppointments() {
                           </button>
                           <button
                             disabled={updatingId === appt.id}
-                            onClick={() => handleUpdateStatus(appt.id, 'batal')}
+                            onClick={() => confirmUpdateStatus(appt.id, 'batal')}
                             className="w-8 h-8 flex items-center justify-center rounded-lg bg-red-100 text-red-600 hover:bg-red-200 transition-colors"
                             title="Batalkan"
                           >
@@ -155,7 +188,26 @@ export default function AdminAppointments() {
             </tbody>
           </table>
         </div>
+
+        {/* Pagination */}
+        <div className="p-4 md:p-6 border-t border-slate-100 bg-white">
+          <Pagination
+            currentPage={currentPage}
+            lastPage={lastPage}
+            onPageChange={(newPage) => setCurrentPage(newPage)}
+          />
+        </div>
       </div>
+
+      <AlertModal
+        isOpen={isModalOpen}
+        type={modalConfig.type}
+        title={modalConfig.title}
+        message={modalConfig.message}
+        confirmVariant={modalConfig.confirmVariant}
+        onClose={closeAlert}
+        onConfirm={modalConfig.onConfirm}
+      />
     </div>
   );
 }
