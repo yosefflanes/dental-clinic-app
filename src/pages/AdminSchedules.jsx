@@ -11,25 +11,30 @@ import ScheduleFormModal from "@/components/admin/schedules/ScheduleFormModal";
 
 export default function AdminSchedules() {
   // 1. Inisiasi Hooks & State Utama
-  const { isModalOpen: isAlertOpen, modalConfig, showAlert, closeAlert } = useAlert();
-  
+  const {
+    isModalOpen: isAlertOpen,
+    modalConfig,
+    showAlert,
+    closeAlert,
+  } = useAlert();
+
   const [schedules, setSchedules] = useState([]);
   const [doctors, setDoctors] = useState([]);
   const [loading, setLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  
+
   // 2. State untuk Filter
   const [filterDoctor, setFilterDoctor] = useState("");
   const [filterMonth, setFilterMonth] = useState(
-    new Date().toISOString().slice(0, 7)
+    new Date().toISOString().slice(0, 7),
   );
 
   // 3. State untuk Form Tambah Jadwal
   const [formData, setFormData] = useState({
     doctor_id: "",
     practice_date: "",
-    start_time: "08:00",
-    end_time: "12:00",
+    start_time: "09:00",
+    end_time: "15:00",
   });
 
   // 4. Fungsi Mengambil Data Master (Dokter & Jadwal)
@@ -57,12 +62,22 @@ export default function AdminSchedules() {
     fetchData();
   }, []);
 
-  // 5. Eksekusi Penyaringan Jadwal
+  // 5. Eksekusi Penyaringan Jadwal (Hanya tampilkan hari ini ke depan)
+  const todayString = new Date().toISOString().split("T")[0]; // (YYYY-MM-DD)
+
   const filteredSchedules = schedules.filter((sched) => {
+    const isNotPassed = sched.practice_date
+      ? sched.practice_date >= todayString
+      : false;
+
     const matchDoctor = filterDoctor ? sched.doctor_id == filterDoctor : true;
-    const schedMonth = sched.practice_date ? sched.practice_date.slice(0, 7) : "";
+
+    const schedMonth = sched.practice_date
+      ? sched.practice_date.slice(0, 7)
+      : "";
     const matchMonth = filterMonth ? schedMonth === filterMonth : true;
-    return matchDoctor && matchMonth;
+
+    return isNotPassed && matchDoctor && matchMonth;
   });
 
   // 6. Fungsi Submit Jadwal Baru
@@ -72,9 +87,17 @@ export default function AdminSchedules() {
       await apiRequest("/doctor-schedules", { method: "POST", body: formData });
       setIsModalOpen(false);
       fetchData();
-      showAlert({ type: "success", title: "Berhasil", message: "Jadwal berhasil disimpan." });
+      showAlert({
+        type: "success",
+        title: "Berhasil",
+        message: "Jadwal berhasil disimpan.",
+      });
     } catch (error) {
-      showAlert({ type: "error", title: "Gagal", message: error.message || "Gagal menyimpan jadwal." });
+      showAlert({
+        type: "error",
+        title: "Gagal",
+        message: error.message || "Gagal menyimpan jadwal.",
+      });
     }
   };
 
@@ -86,9 +109,17 @@ export default function AdminSchedules() {
         body: { is_available: !currentStatus },
       });
       fetchData();
-      showAlert({ type: "success", title: "Status Diperbarui", message: "Ketersediaan jadwal dokter diubah." });
+      showAlert({
+        type: "success",
+        title: "Status Diperbarui",
+        message: "Ketersediaan jadwal dokter diubah.",
+      });
     } catch (error) {
-      showAlert({ type: "error", title: "Gagal", message: error.message || "Gagal mengubah status." });
+      showAlert({
+        type: "error",
+        title: "Gagal",
+        message: error.message || "Gagal mengubah status.",
+      });
     }
   };
 
@@ -106,8 +137,12 @@ export default function AdminSchedules() {
       {/* Header Halaman */}
       <div className="flex flex-col sm:flex-row sm:justify-between sm:items-end gap-4">
         <div>
-          <h1 className="text-2xl md:text-[32px] font-bold text-slate-800 tracking-tight mb-1">Kelola Jadwal</h1>
-          <p className="text-slate-500 text-sm md:text-[16px]">Atur tanggal, jam praktik, dan status ketersediaan.</p>
+          <h1 className="text-2xl md:text-[32px] font-bold text-slate-800 tracking-tight mb-1">
+            Kelola Jadwal
+          </h1>
+          <p className="text-slate-500 text-sm md:text-[16px]">
+            Atur tanggal, jam praktik, dan status ketersediaan.
+          </p>
         </div>
         <button
           onClick={() => setIsModalOpen(true)}
@@ -118,7 +153,7 @@ export default function AdminSchedules() {
       </div>
 
       {/* Komponen Filter */}
-      <ScheduleFilter 
+      <ScheduleFilter
         doctors={doctors}
         filterDoctor={filterDoctor}
         setFilterDoctor={setFilterDoctor}
@@ -127,14 +162,14 @@ export default function AdminSchedules() {
       />
 
       {/* Komponen Tabel Data */}
-      <ScheduleTable 
+      <ScheduleTable
         schedules={filteredSchedules}
         onToggleStatus={handleToggleAvailability}
         isModalOpen={isModalOpen}
       />
 
       {/* Komponen Modal Form Tambah */}
-      <ScheduleFormModal 
+      <ScheduleFormModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
         onSubmit={handleSubmit}
