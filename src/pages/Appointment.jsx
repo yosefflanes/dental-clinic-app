@@ -49,7 +49,7 @@ export default function Appointment() {
   useEffect(() => {
     const fetchServices = async () => {
       try {
-        const response = await apiRequest("/services");
+        const response = await apiRequest("/services?active=1&limit=50");
         const dataLayanan = response.data.data || response;
         setServices(Array.isArray(dataLayanan) ? dataLayanan : []);
       } catch (error) {
