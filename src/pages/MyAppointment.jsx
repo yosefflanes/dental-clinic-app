@@ -7,17 +7,10 @@ import AlertModal from "@/components/ui/AlertModal";
 import AppointmentCard from "@/components/ui/AppointmentCard";
 
 export default function MyAppointment() {
-  const {isModalOpen, modalConfig, showAlert, closeAlert} = useAlert();
+  const { isModalOpen: isAlertOpen, modalConfig, showAlert, closeAlert } = useAlert();
   const [appointments, setAppointments] = useState([]);
   const [loading, setLoading] = useState(true);
   const [cancelLoading, setCancelLoading] = useState(null);
-
-  const [modal, setModal] = useState({
-    isOpen: false,
-    type: "",
-    message: "",
-    onConfirm: null,
-  });
 
   // Fungsi untuk mengambil data riwayat appointment
   const fetchAppointments = async () => {
@@ -35,7 +28,6 @@ export default function MyAppointment() {
   };
 
   useEffect(() => {
-    // eslint-disable-next-line
     fetchAppointments();
   }, []);
 
@@ -57,7 +49,6 @@ export default function MyAppointment() {
       await apiRequest(`/appointments/${id}/cancel`, { method: "PATCH" });
       fetchAppointments();
 
-      // Tampilkan modal sukses
       showAlert({
         type: "success",
         title: "Berhasil",
@@ -100,7 +91,6 @@ export default function MyAppointment() {
         throw new Error("Token pembayaran tidak ditemukan.");
       }
 
-      // Fungsi pembantu untuk memanggil popup midtrans
       const payWithMidtrans = () => {
         window.snap.pay(snapToken, {
           onSuccess: function (result) {
@@ -161,36 +151,39 @@ export default function MyAppointment() {
   if (loading) {
     return (
       <div className="flex justify-center items-center min-h-[60vh]">
-        <Loader2 className="h-10 w-10 animate-spin text-blue-custom" />
+        <Loader2 className="h-10 w-10 animate-spin text-teal-600" />
       </div>
     );
   }
 
   return (
-    <section className="max-w-4xl mx-auto py-24 px-6 min-h-screen mt-12">
-      <div className="mb-10 text-center md:text-left">
-        <h2 className="text-3xl font-extrabold text-slate-800 mb-2">
+    <section className="max-w-2xl mx-auto py-24 px-6 min-h-screen mt-12">
+      <div className="mb-10">
+        <h2 className="font-serif text-3xl text-slate-800 mb-1">
           Riwayat Appointment
         </h2>
-        <p className="text-slate-500">
+        <p className="text-slate-500 text-sm">
           Pantau jadwal dan status kunjunganmu ke klinik di sini.
         </p>
       </div>
 
       {appointments.length === 0 ? (
-        <div className="bg-white p-10 rounded-3xl shadow-sm border border-slate-100 text-center">
+        <div className="bg-white p-10 rounded-2xl border border-slate-100 text-center">
           <p className="text-slate-500 mb-4">
             Kamu belum memiliki riwayat appointment.
           </p>
           <Button
             onClick={() => (window.location.href = "/appointment")}
-            className="bg-blue-custom hover:bg-blue-dark hover:cursor-pointer"
+            className="bg-teal-700 hover:bg-teal-800"
           >
             Buat Appointment Sekarang
           </Button>
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="relative pl-6">
+          {/* Garis linimasa vertikal */}
+          <div className="absolute left-1.75 top-2 bottom-2 w-px bg-slate-200" />
+
           {appointments.map((appt) => {
             const schedule = appt.doctor_schedule || appt.doctorSchedule;
 
@@ -214,7 +207,7 @@ export default function MyAppointment() {
         </div>
       )}
       <AlertModal
-        isOpen={isModalOpen}
+        isOpen={isAlertOpen}
         type={modalConfig.type}
         title={modalConfig.title}
         message={modalConfig.message}
