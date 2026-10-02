@@ -4,7 +4,6 @@ import { Loader2, Plus } from "lucide-react";
 import { useAlert } from "@/hooks/useAlert";
 import AlertModal from "@/components/ui/AlertModal";
 
-// Import Komponen Kecil yang Baru Saja Kita Buat
 import ScheduleFilter from "@/components/admin/schedules/ScheduleFilter";
 import ScheduleTable from "@/components/admin/schedules/ScheduleTable";
 import ScheduleFormModal from "@/components/admin/schedules/ScheduleFormModal";
