@@ -83,7 +83,7 @@ npm install
 3. **Environment Setup**
 Create a `.env` file in the root directory (or copy from `.env.example`) and configure your backend API URL:
 ```env
-VITE_API_BASE_URL=http://localhost:8000/api
+VITE_API_URL=http://localhost:8000/api
 ```
 
 4. **Run the Development Server**
