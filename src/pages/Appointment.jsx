@@ -136,13 +136,13 @@ export default function Appointment() {
     } catch (error) {
       let errorMessage = "Terjadi kesalahan sistem, silahkan coba lagi.";
       
-      if (error.response && error.response.data) {
-        if (error.response.data.errors) {
-          const firstErrorKey = Object.keys(error.response.data.errors)[0];
-          errorMessage = error.response.data.errors[firstErrorKey][0];
+      if (error.data) {
+        if (error.data.errors) {
+          const firstErrorKey = Object.keys(error.data.errors)[0];
+          errorMessage = error.data.errors[firstErrorKey][0];
         }
-        else if (error.response.data.message){
-          errorMessage = error.response.data.message;
+        else if (error.data.message){
+          errorMessage = error.data.message;
         }
       } else if (error.message){
         errorMessage = error.message;
