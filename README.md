@@ -10,7 +10,7 @@ A modern, responsive, and secure Single Page Application (SPA) built with **Reac
 ---
 ## 🌐 Live Demo using Vercel
 Experience the live application here:  
-👉 **https://dental-clinic-lanz2.vercel.app/**
+👉 **https://dental-clinic-eta-five.vercel.app/**
 
 ---
 
